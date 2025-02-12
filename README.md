@@ -1,12 +1,12 @@
 # smartbms123-mqtt
 I have build a LiFePO4 battery pack using [SmartBMS/123](https://123electric.eu/products/123smartbms-gen3/) as BMS. This BMS works fine but only uses a Bluetooth app to read data. This in not sufficient to fully understand how your pack is performing. 
 
-This project is using an Arduino ESP32 connected to the SmartBMS/123 and publish all available data to a Mqtt-server.
+This project is using an Arduino ESP32 connected to the SmartBMS/123 and publish all available data to a Mqtt-server. The data can later by used by, for example, HomeAssistant.
 
 The code for decoding data from the SmartBMS is stolen from [TheRealKasumi](https://github.com/TheRealKasumi/123SmartBMS-Arduino), who did a fantastic work on how to calculate checksum and decode voltage and temperatures.
 
 ## Software
-The 'end' module on the SmartBMS/123 array has a two pin extension port. The 'ext' pin is the actual data and the 'out' pin is ground. From here a 58 byte frame is sent every second on 9600 baud. Each frame has information about the battery pack as a whole, and also information from one cell. Which specific cell that provides its data is cycled so first frame contain data for cell 1, next frame is data for cell 2 and so on.
+The 'end' module on the SmartBMS/123 array has a two pin extension port. The 'ext' pin is the actual data and the 'out' pin is ground. From here a 58 byte frame is sent every second at 9600 baud. Each frame has information about the battery pack as a whole, and also information from one cell. Which specific cell that provides its data is cycled so first frame contain data for cell 1, next frame is data for cell 2 and so on.
 
 If the ESP is not able to connect to a wifi, it will enter configuration mode. This means that a network is created called 'configure-<mac>' (AP). Connect to that wifi and set up wifi, mqtt-server, etc.
 You can also update the software in the ESP via network, using ArduinoOTA. To be able to debug you can telnet into the ESP.

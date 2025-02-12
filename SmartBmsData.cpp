@@ -150,7 +150,7 @@ const float SmartBmsData::getHighestCellVoltage() const
 
 const uint8_t SmartBmsData::getHighestCellVoltageNumber() const
 {
-	return this->highestCellTemperatureNumber_;
+	return this->highestCellVoltageNumber_;
 }
 
 const float SmartBmsData::getLowestCellTemperature() const

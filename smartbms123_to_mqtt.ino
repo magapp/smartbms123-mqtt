@@ -374,7 +374,7 @@ void idle(void) {
   static Neotimer sendMqttTimer_3 = Neotimer();
   static Neotimer sendMqttTimer_5 = Neotimer();
   static Neotimer sendMqttTimer_120 = Neotimer();
-  static valid_data;
+  static bool valid_data;
 
   if (machine.executeOnce) {
     logger.println("IDLE");

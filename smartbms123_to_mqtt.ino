@@ -391,7 +391,7 @@ void idle(void) {
     sendMqttTimer_120.set(120000);
     sendMqttTimer_120.start();
 
-    valid_data = false;
+    valid_data = false;  // prevent corrupt data to be published
     ledBlue(false);
   }
 
@@ -412,11 +412,11 @@ void idle(void) {
       ledBlue(false);
 
     } else if (err == SmartBmsError::SBMS_ERR_READ_STREAM) {
-            valid_data = false;
-            logger.println("BMS: Could not read");
+      valid_data = false;
+      logger.println("BMS: Could not read");
     } else if (err == SmartBmsError::SBMS_ERR_INVALID_CHECKSUM) {
-            valid_data = false;
-            logger.println("BMS: Invalid checksum.");
+      valid_data = false;
+      logger.println("BMS: Invalid checksum.");
     }
   }
 

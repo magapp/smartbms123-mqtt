@@ -399,9 +399,9 @@ void idle(void) {
   if (smartBmsReader.bmsDataReady() == SmartBmsError::SBMS_OK) {
     const SmartBmsError err = smartBmsReader.decodeBmsData(&smartBmsData);
     if (err == SmartBmsError::SBMS_OK) {
-      valid_data = false;
-      ledBlue(true);
+      valid_data = true;
 
+      ledBlue(true);
       logger.println("BMS: Cell " + String(smartBmsData.getCurrentCell()) + " " + String(smartBmsData.getCurrentCellVoltage()) + "v " + String(smartBmsData.getCurrentCellTemperature()) + "°C");
 
       String topic = getTopic("voltage/" + String(smartBmsData.getCurrentCell()));
@@ -409,8 +409,8 @@ void idle(void) {
 
       topic = getTopic("temperature/" + String(smartBmsData.getCurrentCell()));
       mqttClient.publish(topic.c_str(), String(smartBmsData.getCurrentCellTemperature()).c_str());
-
       ledBlue(false);
+
     } else if (err == SmartBmsError::SBMS_ERR_READ_STREAM) {
             valid_data = false;
             logger.println("BMS: Could not read");

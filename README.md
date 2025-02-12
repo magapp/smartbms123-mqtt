@@ -34,6 +34,32 @@ This is an example of how I use SmartBMS/123 and Victron MultiPlus-II. The bank 
 ## Homassistant and Grafana
 Here is an example on how HomeAssistant can look to replace the SmartBMS/123 Bluetooth app. Also, I have had great benefit from Grafana when balancing the batteries and to see how they are affected over time.
 
+For example you can configure all mqtt message something lite this:
+
+```
+mqtt:
+  sensor:
+    - name: "SmartBms cell 1 temperature"
+      object_id: "smartbms_temperature_1"
+      state_topic: "smartbms123/5CCF7FF0A403/temperature/1"
+      value_template: '{{value | round(0) }}'
+      expire_after: 900
+      unit_of_measurement: '°C'
+      device_class: temperature
+      icon: mdi:home-thermometer-outline
+      qos: 1
+
+    - name: "SmartBms Pack voltage"
+      object_id: "smartbms_pack_voltage"
+      state_topic: "smartbms123/5CCF7FF0A403/pack-voltage"
+      expire_after: 900
+      unit_of_measurement: 'V'
+      device_class: voltage
+      icon: mdi:power
+      qos: 1
+
+... and so on ...
+```
 ![alt tag](/img/homeassistant.jpg)
 
 ![alt tag](/img/grafana.jpg)

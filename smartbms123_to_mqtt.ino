@@ -374,6 +374,7 @@ void idle(void) {
   static Neotimer sendMqttTimer_3 = Neotimer();
   static Neotimer sendMqttTimer_5 = Neotimer();
   static Neotimer sendMqttTimer_120 = Neotimer();
+  static valid_data;
 
   if (machine.executeOnce) {
     logger.println("IDLE");
@@ -389,6 +390,8 @@ void idle(void) {
 
     sendMqttTimer_120.set(120000);
     sendMqttTimer_120.start();
+
+    valid_data = false;
     ledBlue(false);
   }
 
@@ -396,6 +399,7 @@ void idle(void) {
   if (smartBmsReader.bmsDataReady() == SmartBmsError::SBMS_OK) {
     const SmartBmsError err = smartBmsReader.decodeBmsData(&smartBmsData);
     if (err == SmartBmsError::SBMS_OK) {
+      valid_data = false;
       ledBlue(true);
 
       logger.println("BMS: Cell " + String(smartBmsData.getCurrentCell()) + " " + String(smartBmsData.getCurrentCellVoltage()) + "v " + String(smartBmsData.getCurrentCellTemperature()) + "°C");
@@ -408,13 +412,15 @@ void idle(void) {
 
       ledBlue(false);
     } else if (err == SmartBmsError::SBMS_ERR_READ_STREAM) {
+            valid_data = false;
             logger.println("BMS: Could not read");
     } else if (err == SmartBmsError::SBMS_ERR_INVALID_CHECKSUM) {
+            valid_data = false;
             logger.println("BMS: Invalid checksum.");
     }
   }
 
-  if (sendMqttTimer_1.repeat()) {
+  if (sendMqttTimer_1.repeat() && valid_data) {
     switch (random(4)) {
       case 0:
         mqttClient.publish(getTopic("pack-voltage").c_str(), String(smartBmsData.getPackVoltage()).c_str());
@@ -431,7 +437,7 @@ void idle(void) {
     }
   }
 
-  if (sendMqttTimer_3.repeat()) {
+  if (sendMqttTimer_3.repeat() && valid_data) {
     switch (random(4)) {
       case 0:
         mqttClient.publish(getTopic("lowest-cell-voltage").c_str(), String(smartBmsData.getLowestCellVoltage()).c_str());
@@ -452,7 +458,7 @@ void idle(void) {
     }
   }
 
-  if (sendMqttTimer_5.repeat()) {
+  if (sendMqttTimer_5.repeat() && valid_data) {
     switch (random(6)) {
       case 0:
         mqttClient.publish(getTopic("alarm-communication-error").c_str(), String(smartBmsData.hasCommunicationError()).c_str());
@@ -475,7 +481,7 @@ void idle(void) {
     }
   }
 
-  if (sendMqttTimer_120.repeat()) {
+  if (sendMqttTimer_120.repeat() && valid_data) {
     switch (random(8)) {
       case 0:
         mqttClient.publish(getTopic("cell-count").c_str(), String(smartBmsData.getCellCount()).c_str());
